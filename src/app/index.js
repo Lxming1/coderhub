@@ -2,16 +2,17 @@ const Koa = require('koa')
 const multer = require('koa-multer')
 const bodyparse = require('koa-bodyparser')
 
-const { userRouter } = require('../router/user.router')
 const errorHandle = require('./error-handle')
+const useRoutes = require('../router')
 
 const app = new Koa()
 const upload = multer()
 
+app.useRoutes = useRoutes
+
 app.use(bodyparse())
 
-app.use(userRouter.routes())
-app.use(userRouter.allowedMethods())
+app.useRoutes()
 
 app.on('error', errorHandle)
 

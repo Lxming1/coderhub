@@ -1,8 +1,9 @@
 const app = require('./app')
 const config = require('./app/config')
 
+// 加载一下
 require('./app/database')
 
 app.listen(config.APP_PORT, () => {
-  console.log(config.APP_PORT + '服务器启动成功')
+  console.log('服务器启动成功')
 })

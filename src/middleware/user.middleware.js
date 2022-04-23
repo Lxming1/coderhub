@@ -1,5 +1,6 @@
 const errorTypes = require('../constants/error-types')
 const { getUsername } = require('../service/user.service')
+const { md5handle } = require('../utils/handle-password')
 
 // 验证用户名密码
 const verifyUser = async (ctx, next) => {
@@ -14,7 +15,6 @@ const verifyUser = async (ctx, next) => {
 
   // 判断用户名是否已存在
   const result = await getUsername(username)
-  console.log(result)
 
   if (result.length !== 0) {
     const err = new Error(errorTypes.USERNAME_ALREADY_EXIST)
@@ -23,6 +23,15 @@ const verifyUser = async (ctx, next) => {
   await next()
 }
 
+// 加密密码
+const handlePassword = async (ctx, next) => {
+  const { password } = ctx.request.body
+  ctx.request.body.password = md5handle(password)
+
+  await next()
+}
+
 module.exports = {
   verifyUser,
+  handlePassword,
 }
