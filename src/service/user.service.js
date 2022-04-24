@@ -7,7 +7,7 @@ class User {
     return result[0]
   }
 
-  async getUsername(name) {
+  async verifyName(name) {
     const statement = `select * from users where name = ?`
     const result = await connection.execute(statement, [name])
 
