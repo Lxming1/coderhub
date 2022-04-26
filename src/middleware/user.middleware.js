@@ -15,7 +15,6 @@ const verifyUser = async (ctx, next) => {
 
   // 判断用户名是否已存在
   const result = await verifyName(username)
-
   if (result.length !== 0) {
     const err = new Error(errorTypes.USERNAME_ALREADY_EXIST)
     return ctx.app.emit('error', err, ctx)

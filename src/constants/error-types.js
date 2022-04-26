@@ -3,9 +3,10 @@ const USERNAME_ALREADY_EXIST = 'Username already exist'
 const USERNAME_DOSE_NOT_EXIST = 'Username dose not exist'
 const PASSORD_ERROR = 'Password error'
 const UNAUTHORIZATION = 'Unauthorization'
-const NUM_AND_SIZE_NOT_EXIST = 'Not found query pagenum and pagesize'
-const QUERY_ERROR = 'Query key is right but value is not in scope'
-const NOT_FOUND_MOMENTID = 'Not found momentId'
+const UNPERMISSION = 'Unpermission'
+// const QUERY_KEY_ERROR = 'Query key is lack or incorrect'
+// const QUERY_VALUE_ERROR = 'Query value is not in scope'
+// const PARAMS_VALUE_ERROR = 'Params is not in scope'
 
 module.exports = {
   USERNAME_OR_PASSWORD_IS_REQUIRED,
@@ -13,7 +14,8 @@ module.exports = {
   USERNAME_DOSE_NOT_EXIST,
   PASSORD_ERROR,
   UNAUTHORIZATION,
-  NUM_AND_SIZE_NOT_EXIST,
-  NOT_FOUND_MOMENTID,
-  QUERY_ERROR,
+  UNPERMISSION,
+  // QUERY_KEY_ERROR,
+  // PARAMS_VALUE_ERROR,
+  // QUERY_VALUE_ERROR,
 }
