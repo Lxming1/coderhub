@@ -66,6 +66,12 @@ class Moment {
     const result = await connection.execute(statement, [momentId])
     return result[0]
   }
+
+  async addLabels(labels, momentId) {
+    const statement = `
+      select 
+    `
+  }
 }
 
 module.exports = new Moment()

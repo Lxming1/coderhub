@@ -1,4 +1,4 @@
-const { create, detail, list, del, update } = require('../service/moment.service')
+const { create, detail, list, del, update, addLabels } = require('../service/moment.service')
 const { successBody, successMes } = require('../utils/success-body')
 
 class Moment {
@@ -13,7 +13,7 @@ class Moment {
 
   // 查询一条动态
   async detail(ctx, next) {
-    const momentId = ctx.params.momentId
+    const { momentId } = ctx.params
 
     const result = await detail(momentId)
 
@@ -45,8 +45,8 @@ class Moment {
 
   // 修改动态
   async update(ctx, next) {
-    const momentId = ctx.params.momentId
-    const content = ctx.request.body.content
+    const { momentId } = ctx.params
+    const { content } = ctx.request.body
 
     await update(momentId, content)
 
@@ -55,11 +55,19 @@ class Moment {
 
   // 删除动态
   async del(ctx, next) {
-    const momentId = ctx.params.momentId
+    const { momentId } = ctx.params
 
     await del(momentId)
 
     ctx.body = successMes('Delete Success')
+  }
+
+  async addLabels(ctx) {
+    const { labels } = ctx.request.body
+    const { momentId } = ctx.params
+    const result = await addLabels
+    console.log(labels)
+    ctx.body = '添加标签成功'
   }
 }
 
