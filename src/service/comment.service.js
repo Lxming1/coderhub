@@ -34,6 +34,21 @@ class Comment {
     const [result] = await connection.execute(statement, [commentId])
     return result
   }
+
+  async list(momentId) {
+    const statement = `
+      SELECT 
+        c.id id, c.content content, c.comment_id commentId,
+        JSON_OBJECT('id', u.id, 'name', u.name ) author, 
+        c.createAt createTime, c.updateAt updateTime 
+      FROM comment c 
+      LEFT JOIN users u
+      ON c.user_id = u.id
+      where moment_id = ?
+    `
+    const [result] = await connection.execute(statement, [momentId])
+    return result
+  }
 }
 
 module.exports = new Comment()
