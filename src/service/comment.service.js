@@ -39,12 +39,12 @@ class Comment {
     const statement = `
       SELECT 
         c.id id, c.content content, c.comment_id commentId,
-        JSON_OBJECT('id', u.id, 'name', u.name ) author, 
+        JSON_OBJECT('id', u.id, 'name', u.name, 'avatarUrl', u.avatar_url) author, 
         c.createAt createTime, c.updateAt updateTime 
       FROM comment c 
       LEFT JOIN users u
       ON c.user_id = u.id
-      where moment_id = ?
+      where c.id = ?
     `
     const [result] = await connection.execute(statement, [momentId])
     return result

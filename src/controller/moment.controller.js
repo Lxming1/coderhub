@@ -1,14 +1,22 @@
-const { create, detail, list, del, update, addLabels } = require('../service/moment.service')
-const { successBody, successMes } = require('../utils/success-body')
+const {
+  create,
+  detail,
+  list,
+  del,
+  update,
+  addLabels,
+  hasLabel,
+} = require('../service/moment.service')
+const { successBody } = require('../utils/success-body')
 
 class Moment {
   async create(ctx, next) {
     const userId = ctx.user.id
     const { content } = ctx.request.body
 
-    await create(userId, content)
+    const result = await create(userId, content)
 
-    ctx.body = successMes('Create Moment Success')
+    ctx.body = successBody(result)
   }
 
   // 查询一条动态
@@ -17,14 +25,16 @@ class Moment {
 
     const result = await detail(momentId)
 
-    ctx.body = successBody(result)
+    const labels = result[0].labels
+    result[0].labels = labels[0].id === null ? [] : labels
+
+    ctx.body = successBody(result[0])
   }
 
   // 查询多条动态
   async list(ctx, next) {
     const { pagenum, pagesize } = ctx.query
     let result = null
-
     try {
       result = await list(pagesize, pagenum)
     } catch (error) {
@@ -32,15 +42,10 @@ class Moment {
       const err = new Error()
       return ctx.app.emit('error', err, ctx)
     }
-
-    ctx.body = {
-      status: 200,
-      message: 'Success',
-      data: {
-        total: result.length,
-        list: result,
-      },
-    }
+    ctx.body = successBody({
+      total: result.length,
+      moments: result,
+    })
   }
 
   // 修改动态
@@ -48,26 +53,33 @@ class Moment {
     const { momentId } = ctx.params
     const { content } = ctx.request.body
 
-    await update(momentId, content)
+    const result = await update(momentId, content)
 
-    ctx.body = successMes('Update Success')
+    ctx.body = successBody(result)
   }
 
   // 删除动态
   async del(ctx, next) {
     const { momentId } = ctx.params
 
-    await del(momentId)
+    const result = await del(momentId)
 
-    ctx.body = successMes('Delete Success')
+    ctx.body = successBody(result)
   }
 
   async addLabels(ctx) {
-    const { labels } = ctx.request.body
+    const { labels } = ctx
     const { momentId } = ctx.params
-    const result = await addLabels
-    console.log(labels)
-    ctx.body = '添加标签成功'
+    const respBody = []
+    for (let item of labels) {
+      const isExist = await hasLabel(item.id, momentId)
+      // 如果没有给动态加此标签才加
+      if (!isExist) {
+        await addLabels(item.id, momentId)
+      }
+      respBody.push(item)
+    }
+    ctx.body = successBody(respBody)
   }
 }
 

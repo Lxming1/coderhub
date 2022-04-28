@@ -6,6 +6,7 @@ const PUBLIC_KEY = fs.readFileSync('src/app/keys/public.key')
 env.config()
 
 module.exports = {
+  APP_HOST,
   APP_PORT,
   MYSQL_HOST,
   MYSQL_PORT,

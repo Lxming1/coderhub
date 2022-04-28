@@ -4,31 +4,49 @@ class Label {
     const statement = `
       insert into label (name) values (?)
     `
-    let result = await connection.execute(statement, [name])
-    return result[0]
+    let [result] = await connection.execute(statement, [name])
+    return result
   }
 
-  async verifyLabelExist(labels) {
+  async findId(name) {
+    const statement = `
+      select id from label where name = ?
+    `
+    let [result] = await connection.execute(statement, [name])
+    return result
+  }
+
+  async list(pagesize, pagenum) {
+    const offset = (pagenum - 1) * pagesize + ''
+    const statement = `
+      select * from label LIMIT ?, ?
+    `
+    const [result] = await connection.execute(statement, [offset, pagesize])
+    return result
+  }
+
+  async getMomentLabel(momentId) {
+    const statement = `
+      SELECT 
+        JSON_ARRAYAGG(
+          JSON_OBJECT(
+            'id', l.id,
+            'name', l.name
+          )
+        ) labels
+      FROM label l
+      JOIN moment_label ml
+      ON l.id = ml.label_id
+      WHERE ml.moment_id = ?
+    `
+    const [result] = await connection.execute(statement, [momentId])
+    return result
+  }
+
+  async verifyLabelExist(label) {
     const statement = `select * from label where name = ?`
-    const newLabels = []
-    const promiseArr = []
-    labels.forEach(async (item) => {
-      promiseArr.push(
-        connection.execute(statement, [item]).then(([res]) => {
-          newLabels.push(res[0]?.name)
-        })
-      )
-      // const [result] = await connection.execute(statement, [item])
-      // result.length && newLabels.push(result[0].name)
-      // console.log(newLabels)
-    })
-    Promise.all(promiseArr).then(() => {
-      console.log(newLabels)
-    })
-    // console.log(labels)
-    // console.log(newLabels)
-    // console.log([...new Set([...newLabels, ...labels])])
-    return [...new Set([...newLabels, ...labels])]
+    let [result] = await connection.execute(statement, [label])
+    return result[0] ? true : false
   }
 }
 

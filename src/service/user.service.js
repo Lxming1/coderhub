@@ -12,6 +12,12 @@ class User {
     const result = await connection.execute(statement, [name])
     return result[0]
   }
+
+  async getAvatarInfo(userId) {
+    const statement = `select * from avatar where user_id = ?`
+    const [result] = await connection.execute(statement, [userId])
+    return result
+  }
 }
 
 module.exports = new User()

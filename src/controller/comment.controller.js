@@ -1,26 +1,26 @@
 const { create, reply, del, list } = require('../service/comment.service')
-const { successMes, successBody } = require('../utils/success-body')
+const { successBody } = require('../utils/success-body')
 
 class Comment {
   async create(ctx) {
     const { content, momentId } = ctx.request.body
     const userId = ctx.user.id
-    await create(content, momentId, userId)
-    ctx.body = successMes('Comment Success')
+    const result = await create(content, momentId, userId)
+    ctx.body = successBody(result)
   }
 
   async reply(ctx) {
     const { content, momentId } = ctx.request.body
     const { commentId } = ctx.params
     const userId = ctx.user.id
-    await reply(content, momentId, userId, commentId)
-    ctx.body = successMes('Reply Success')
+    const result = await reply(content, momentId, userId, commentId)
+    ctx.body = successBody(result)
   }
 
   async del(ctx) {
     const { commentId } = ctx.params
-    await del(commentId)
-    ctx.body = successMes('Delete Success')
+    const result = await del(commentId)
+    ctx.body = successBody(result)
   }
 
   async list(ctx) {
@@ -31,7 +31,6 @@ class Comment {
     }
 
     const result = await list(momentId)
-
     const resp = {
       total: result.length,
       comments: result,
