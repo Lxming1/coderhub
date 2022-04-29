@@ -44,7 +44,7 @@ class Comment {
       FROM comment c 
       LEFT JOIN users u
       ON c.user_id = u.id
-      where c.id = ?
+      where c.moment_id = ?
     `
     const [result] = await connection.execute(statement, [momentId])
     return result

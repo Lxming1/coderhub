@@ -1,7 +1,5 @@
-const fs = require('fs')
-const { AVATAR_PATH } = require('../constants/file-types')
 const { APP_HOST, APP_PORT } = require('../app/config')
-const { saveFileInfo, savaAvatar, currentAvatar, rmAvatar } = require('../service/file.service')
+const { saveFileInfo, savaAvatar, savePicInfo } = require('../service/file.service')
 const { successBody } = require('../utils/success-body')
 
 class FileController {
@@ -14,6 +12,20 @@ class FileController {
     // 将图像信息保存到数据库
     const result = await saveFileInfo(filename, mimetype, size, id)
     ctx.body = successBody(result)
+  }
+
+  async savePicture(ctx, next) {
+    const { momentId } = ctx.query
+    const { id } = ctx.user
+    const { files } = ctx.req
+
+    const reqArr = []
+    for (let file of files) {
+      const { mimetype, filename, size } = file
+      const result = await savePicInfo(filename, mimetype, size, momentId, id)
+      reqArr.push(result)
+    }
+    ctx.body = successBody(reqArr)
   }
 }
 

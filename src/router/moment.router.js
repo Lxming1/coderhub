@@ -7,6 +7,7 @@ const {
   del,
   update,
   addLabels,
+  showPicture,
 } = require('../controller/moment.controller.js')
 const { verifyLabelExist } = require('../middleware/label.middleware')
 
@@ -24,5 +25,7 @@ momentRouter.patch('/:momentId', verifyAuth, verifyPermission, update)
 momentRouter.delete('/:momentId', verifyAuth, verifyPermission, del)
 // 给动态添加标签
 momentRouter.post('/:momentId/labels', verifyAuth, verifyPermission, verifyLabelExist, addLabels)
+// 获取动态图片
+momentRouter.get('/image/:filename', showPicture)
 
 module.exports = momentRouter

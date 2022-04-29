@@ -1,3 +1,5 @@
+const fs = require('fs')
+const { PICTURE_PATH } = require('../constants/file-types')
 const {
   create,
   detail,
@@ -6,6 +8,7 @@ const {
   update,
   addLabels,
   hasLabel,
+  getPicInfo,
 } = require('../service/moment.service')
 const { successBody } = require('../utils/success-body')
 
@@ -24,9 +27,6 @@ class Moment {
     const { momentId } = ctx.params
 
     const result = await detail(momentId)
-
-    const labels = result[0].labels
-    result[0].labels = labels[0].id === null ? [] : labels
 
     ctx.body = successBody(result[0])
   }
@@ -80,6 +80,30 @@ class Moment {
       respBody.push(item)
     }
     ctx.body = successBody(respBody)
+  }
+
+  async showPicture(ctx) {
+    try {
+      let { filename } = ctx.params
+      const { type } = ctx.query
+      const types = ['large', 'middle', 'small']
+      if (type) {
+        if (types.some((item) => item === type)) {
+          filename = filename + '-' + type
+        } else throw new Error()
+      }
+      try {
+        const result = await getPicInfo(filename)
+
+        ctx.response.set('content-type', result[0].mimetype)
+        ctx.body = fs.createReadStream(`${PICTURE_PATH}/${filename}`)
+      } catch (error) {
+        throw new Error()
+      }
+    } catch (error) {
+      const err = new Error()
+      ctx.app.emit('error', err, ctx)
+    }
   }
 }
 
