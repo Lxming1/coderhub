@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const { PRIVATE_KEY } = require('../app/config')
+const { getUserAvatar } = require('../service/user.service')
 const { successBody } = require('../utils/success-body')
 
 class Auth {
@@ -10,7 +11,10 @@ class Auth {
       algorithm: 'RS256',
     })
 
-    ctx.body = successBody({ id, name, token })
+    const userAvatar = await getUserAvatar(id)
+    const avatarUrl = userAvatar.avatar_url
+
+    ctx.body = successBody({ id, name, avatarUrl, token })
   }
 }
 

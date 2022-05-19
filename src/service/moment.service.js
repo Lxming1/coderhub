@@ -15,7 +15,8 @@ const sqlFragment = `
       )
     ) , NULL) labels,
     (select count(*) from moment_label ml where ml.moment_id = m.id) labelCount,
-    (select count(*) from comment c where c.moment_id = m.id) commentCount,
+    (select count(*) from comment ml where ml.moment_id = m.id) commentCount,
+  
     JSON_OBJECT(
       'id', u.id, 
       'name', u.name, 
@@ -46,10 +47,14 @@ class Moment {
   async list(pagesize, pagenum) {
     const offset = (pagenum - 1) * pagesize + ''
     const statement = `
-      ${sqlFragment} GROUP BY m.id LIMIT ?, ? 
+      ${sqlFragment} GROUP BY m.id ORDER BY m.id desc LIMIT ?, ?
     `
-    const [result] = await connection.execute(statement, [offset, pagesize])
-    return result
+    try {
+      const [result] = await connection.execute(statement, [offset, pagesize])
+      return result
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   async update(momentId, newContent) {
@@ -111,3 +116,10 @@ module.exports = new Moment()
 //   ON c.user_id = cu.id
 //   WHERE m.id = ?
 // `
+
+// (select JSON_ARRAYAGG(JSON_OBJECT(
+// 	'id', cc.id, 'author', JSON_OBJECT(
+//     'id', uu.id, 'name', uu.name
+//   ), 'content', cc.content,
+//   "momentId", cc.moment_id, "commentId", cc.comment_id
+// )) from comment cc join moment mm on cc.moment_id = mm.id and mm.id = m.id join users uu on uu.id = cc.user_id) comments,
